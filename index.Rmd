@@ -4,7 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
-      # theme: simplex
+        # theme: paper
 ---
 
 ```{r setup, include=FALSE}
@@ -92,6 +92,8 @@ plot_ly(data = nacional_covid19) %>%
 
 
 ```
+
+Datos: Ministerio de Sanidad a través de Datadista
 
 Column {data-width=350}
 -----------------------------------------------------------------------
