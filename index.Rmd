@@ -1,0 +1,112 @@
+---
+title: "COVID-19 in Spain"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+      # theme: simplex
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(coronavirus)
+library(DT)
+library(plotly)
+
+nacional_covid19 <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv") %>% 
+  mutate(activos = casos - altas - fallecimientos) %>% 
+  mutate(fecha = as.Date(fecha))
+
+ccaa_covid19_altas <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_altas.csv")
+ccaa_covid19_casos <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_casos.csv")
+ccaa_covid19_fallecidos <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_fallecidos.csv")
+ccaa_covid19_uci <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_uci.csv") 
+
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+
+vline <- function(x = 0, color = "grey") {
+  list(
+    type = "line", 
+    y0 = 0, 
+    y1 = 1, 
+    yref = "paper",
+    x0 = x, 
+    x1 = x, 
+    line = list(color = color, dash = 'dot')
+  )
+}
+
+vannotation <- function(mytext,  xcoord, ycoord = 0) {
+  list(yref = 'paper', 
+       xref = "x", y = ycoord, x = xcoord, text = mytext)
+}
+
+caption <- function(mytext) {
+  list(x = 1, y = -0.1, text = mytext, 
+      showarrow = F, xref = 'paper', yref = 'paper', 
+      xanchor = 'right', yanchor = 'auto', xshift=0, yshift = 0,
+      font = list(size = 10, color = "grey")
+      )
+}
+
+
+plot_ly(data = nacional_covid19) %>% 
+  add_trace(x = ~ fecha,
+            y = ~ casos,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Casos detectados") %>% 
+  add_trace(x = ~ fecha,
+            y = ~ activos,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Casos activos") %>% 
+   add_trace(x = ~ fecha,
+            y = ~ altas,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Casos recuperados") %>% 
+  layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
+         annotations = list(
+           vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
+           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
+           caption("Datos: Ministerio de Sanidad a través de Datadista")),
+         title = "Evolución del COVID-19 en España",
+         yaxis = list(title = "Número de casos"),
+         xaxis = list(title = "Fecha"),
+         legend = list(x = 0.1, y = 0.9),
+         hovermode = "compare")  
+  
+
+
+
+
+
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+datatable(nacional_covid19)
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
+
