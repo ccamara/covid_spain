@@ -84,10 +84,10 @@ plot_ly(data = nacional_covid19) %>%
             mode = "lines+markers",
             name = "Casos recuperados") %>% 
   add_trace(x = ~ fecha,
-            y = ~ incremento_casos,
+            y = ~ fallecimientos,
             type = "scatter",
             mode = "lines+markers",
-            name = "Incremento de casos") %>% 
+            name = "Fallecimientos por COVID19") %>% 
   layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
          annotations = list(
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
@@ -113,8 +113,8 @@ Datos: Ministerio de Sanidad a través de Datadista
 plot_ly(data = nacional_covid19) %>% 
   add_trace(x = ~ fecha,
             y = ~ incremento_casos,
-            type = "scatter",
-            mode = "lines+markers",
+            type = "bar",
+            # mode = "lines+markers",
             name = "Incremento de casos") %>% 
   layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
          annotations = list(
