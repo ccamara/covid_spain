@@ -20,18 +20,18 @@ nacional_covid19 <- read.csv("https://raw.githubusercontent.com/datadista/datase
   mutate(activos = casos - altas - fallecimientos) %>% 
   mutate(rownum = row_number()) %>% 
   mutate(casos_anteriores = ifelse(rownum == 1, NA, dplyr::lag(casos))) %>% 
-  mutate(variación_casos = casos - casos_anteriores) %>% 
-  mutate(variación_uci = ifelse(rownum == 1, NA, 
+  mutate(variacion_casos = casos - casos_anteriores) %>% 
+  mutate(variacion_uci = ifelse(rownum == 1, NA, 
                                      ingresos_uci - dplyr::lag(ingresos_uci))) %>% 
-  mutate(variación_activos = ifelse(rownum == 1, NA, 
+  mutate(variacion_activos = ifelse(rownum == 1, NA, 
                                      activos - dplyr::lag(activos))) %>% 
-  mutate(variación_altas = ifelse(rownum == 1, NA, 
+  mutate(variacion_altas = ifelse(rownum == 1, NA, 
                                      altas - dplyr::lag(altas))) %>% 
-  mutate(variación_fallecimientos = ifelse(rownum == 1, NA, 
+  mutate(variacion_fallecimientos = ifelse(rownum == 1, NA, 
                                      fallecimientos - dplyr::lag(fallecimientos))) %>% 
-  select(fecha, casos, variación_casos, ingresos_uci, variación_uci, altas,
-         variación_altas, fallecimientos, variación_fallecimientos, activos,
-         variación_activos) %>% 
+  select(fecha, casos, variacion_casos, ingresos_uci, variacion_uci, altas,
+         variacion_altas, fallecimientos, variacion_fallecimientos, activos,
+         variacion_activos) %>% 
   dplyr::arrange(desc(fecha))
   
 
@@ -99,22 +99,22 @@ Row {.tabset .tabset-fade}
 ```{r}
 plot_ly(data = nacional_covid19) %>% 
   add_trace(x = ~ fecha,
-            y = ~ variación_casos,
+            y = ~ variacion_casos,
             type = "scatter",
             mode = "lines+markers",
             name = "Variación de casos") %>% 
     add_trace(x = ~ fecha,
-            y = ~ variación_activos,
+            y = ~ variacion_activos,
             type = "scatter",
             mode = "lines+markers",
             name = "Variación de casos activos") %>% 
     add_trace(x = ~ fecha,
-            y = ~ variación_altas,
+            y = ~ variacion_altas,
             type = "scatter",
             mode = "lines+markers",
             name = "Variación de casos recuperados") %>% 
   add_trace(x = ~ fecha,
-            y = ~ variación_fallecimientos,
+            y = ~ variacion_fallecimientos,
             type = "scatter",
             mode = "lines+markers",
             name = "Variación de fallecimientos") %>% 
@@ -123,7 +123,7 @@ plot_ly(data = nacional_covid19) %>%
            caption("Datos: Ministerio de Sanidad a través de Datadista"),
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
            vannotation("Confinamiento obligatorio", "2020-3-16", 0.75)),
-         title = "Evolución de variación de casos del COVID-19 con respecto al día anterior, en España",
+         title = "Evolución de variacion de casos del COVID-19 con respecto al día anterior, en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
          legend = list(x = 0.1, y = 0.9),
@@ -174,7 +174,7 @@ plot_ly(data = nacional_covid19) %>%
 ```{r}
 plot_ly(data = nacional_covid19) %>% 
   add_trace(x = ~ fecha,
-            y = ~ variación_casos,
+            y = ~ variacion_casos,
             type = "bar",
             # mode = "lines+markers",
             name = "Variación de casos") %>% 
@@ -183,7 +183,7 @@ plot_ly(data = nacional_covid19) %>%
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
            vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
            caption("Datos: Ministerio de Sanidad a través de Datadista")),
-         title = "Evolución de variación de casos del COVID-19 en España",
+         title = "Evolución de variacion de casos del COVID-19 en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
          legend = list(x = 0.1, y = 0.9),
@@ -204,7 +204,42 @@ datatable(nacional_covid19,
           colnames = c('Fecha', 'Casos', 'Variación casos', 
                        'Ingresos UCI', 'Variación UCI', 
                        'Altas', 'Variación de altas',
-                       'Fallecimientos', 'Variación de fallecimientos')
-          )
+                       'Fallecimientos', 'Variación de fallecimientos',
+                       'Casos activos', 'Variación de activos'),
+          options = list(
+            # columnDefs = list(list(className = 'dt-center', targets = 5)),
+            pageLength = 20, 
+            lengthMenu = c(10, 20, 30))) %>% 
+  formatRound(columns = 2:11, digits = 0, mark = ".", dec.mark = "") %>% 
+  formatStyle(
+    'variacion_casos',
+    background = styleColorBar(nacional_covid19$variacion_casos, 'steelblue'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center') %>% 
+  formatStyle(
+    'variacion_uci',
+    background = styleColorBar(nacional_covid19$variacion_uci, 'pink'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center') %>% 
+  formatStyle(
+    'variacion_altas',
+    background = styleColorBar(nacional_covid19$variacion_altas, '#2C9F2C'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center') %>% 
+  formatStyle(
+    'variacion_fallecimientos',
+    background = styleColorBar(nacional_covid19$variacion_fallecimientos, '#D62728'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center') %>% 
+  formatStyle(
+    'variacion_activos',
+    background = styleColorBar(nacional_covid19$variacion_activos, '#FF7F0E'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center')
 
 ```
