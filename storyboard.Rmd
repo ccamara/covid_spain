@@ -2,10 +2,11 @@
 title: "COVID-19 in Spain"
 output: 
   flexdashboard::flex_dashboard:
-    theme: flatly
-    orientation: rows
+    storyboard: true
+    theme: journal
     social: menu
     source_code: embed
+
 ---
 
 ```{r setup, include=FALSE}
@@ -13,27 +14,14 @@ library(flexdashboard)
 library(coronavirus)
 library(DT)
 library(plotly)
-library(ztable)
 
 nacional_covid19 <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv") %>% 
-  mutate(fecha = as.Date(fecha, format = "%Y-%m-%d")) %>% 
   mutate(activos = casos - altas - fallecimientos) %>% 
+  mutate(fecha = as.Date(fecha)) %>% 
   mutate(rownum = row_number()) %>% 
+  # mutate(casos_anteriores = dplyr::lag(casos, order_by = fecha))
   mutate(casos_anteriores = ifelse(rownum == 1, NA, dplyr::lag(casos))) %>% 
-  mutate(incremento_casos = casos - casos_anteriores) %>% 
-  mutate(incremento_uci = ifelse(rownum == 1, NA, 
-                                     ingresos_uci - dplyr::lag(ingresos_uci))) %>% 
-  mutate(incremento_activos = ifelse(rownum == 1, NA, 
-                                     activos - dplyr::lag(activos))) %>% 
-  mutate(incremento_altas = ifelse(rownum == 1, NA, 
-                                     altas - dplyr::lag(altas))) %>% 
-  mutate(incremento_fallecimientos = ifelse(rownum == 1, NA, 
-                                     fallecimientos - dplyr::lag(fallecimientos))) %>% 
-  select(fecha, casos, incremento_casos, ingresos_uci, incremento_uci, altas,
-         incremento_altas, fallecimientos, incremento_fallecimientos, activos,
-         incremento_activos) %>% 
-  dplyr::arrange(desc(fecha))
-  
+  mutate(incremento_casos = casos - casos_anteriores)
 
 ccaa_covid19_altas <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_altas.csv")
 ccaa_covid19_casos <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_casos.csv")
@@ -63,36 +51,18 @@ vannotation <- function(mytext,  xcoord, ycoord = 0) {
        xref = "x", y = ycoord, x = xcoord, text = mytext)
 }
 
-# caption <- function(mytext) {
-#   list(x = 1, y = -0.1, text = mytext, 
-#       showarrow = F, 
-#       xref = 'paper', yref = 'paper', 
-#       xanchor = 'right', yanchor = 'top', xshift = 0, yshift = 0,
-#       font = list(size = 10, color = "grey")
-#       )
-# }
-
 caption <- function(mytext) {
-  list(text = mytext, 
-       x = 1,
-       y = -0.05,
-       showarrow = F, 
-       xref = 'paper', yref = 'paper', 
-       xanchor = "right",
-       yanchor = "bottom",
-       # xanchor = 'right', yanchor = 'top', xshift = 0, yshift = 0,
-       font = list(size = 10, color = "grey")
-       )
+  list(x = 1, y = -0.1, text = mytext, 
+      showarrow = F, 
+      xref = 'paper', yref = 'paper', 
+      xanchor = 'right', yanchor = 'top', xshift = 0, yshift = 0,
+      font = list(size = 10, color = "grey")
+      )
 }
 
 
 ```
 
-Gráficos España
-=====================================  
-
-Row {.tabset .tabset-fade}
------------------------------------------------------------------------
 
 ### Incremento
 
@@ -103,27 +73,12 @@ plot_ly(data = nacional_covid19) %>%
             type = "scatter",
             mode = "lines+markers",
             name = "Incremento de casos") %>% 
-    add_trace(x = ~ fecha,
-            y = ~ incremento_activos,
-            type = "scatter",
-            mode = "lines+markers",
-            name = "Incremento de casos activos") %>% 
-    add_trace(x = ~ fecha,
-            y = ~ incremento_altas,
-            type = "scatter",
-            mode = "lines+markers",
-            name = "Incremento de casos recuperados") %>% 
-  add_trace(x = ~ fecha,
-            y = ~ incremento_fallecimientos,
-            type = "scatter",
-            mode = "lines+markers",
-            name = "Incremento de fallecimientos") %>% 
   layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
          annotations = list(
            caption("Datos: Ministerio de Sanidad a través de Datadista"),
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
            vannotation("Confinamiento obligatorio", "2020-3-16", 0.75)),
-         title = "Evolución de incremento de casos del COVID-19 con respecto al día anterior, en España",
+         title = "Evolución de incremento de casos del COVID-19 en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
          legend = list(x = 0.1, y = 0.9),
@@ -131,6 +86,9 @@ plot_ly(data = nacional_covid19) %>%
 
 
 ```
+
+*** 
+Some commentary about Frame 1.
 
 ### Acumulados
 
@@ -191,15 +149,34 @@ plot_ly(data = nacional_covid19) %>%
   
 ```
 
-Datos
-=====================================  
+### Chart B
 
-Row
------------------------------------------------------------------------
+```{r}
+plot_ly(data = nacional_covid19) %>% 
+  add_trace(x = ~ fecha,
+            y = ~ incremento_casos,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Incremento de casos") %>% 
+  layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
+         annotations = list(
+           vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
+           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
+           caption("Datos: Ministerio de Sanidad a través de Datadista")),
+         title = "Evolución de incremento de casos del COVID-19 en España",
+         yaxis = list(title = "Número de casos"),
+         xaxis = list(title = "Fecha"),
+         legend = list(x = 0.1, y = 0.9),
+         hovermode = "compare")  
 
-### Tabla de datos
+
+```
+
+### Chart C
 
 ```{r}
 datatable(nacional_covid19)
 
 ```
+
+
