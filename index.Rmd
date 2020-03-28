@@ -217,11 +217,19 @@ datatable(nacional_covid19,
 
 ```
 
-### Fuente de datos
+### Acerca de este gráfico
+
+####  Datos
 
 Para los gráficos totales de España se han utilizado las siguientes fuentes de datos:
 
 * [Ministerio de Sanidad a través de Datadista](https://github.com/datadista/datasets/tree/master/COVID%2019)
+
+#### Definiciones
+
+* `Casos activos`: se calcula a partir del número total de casos de un día, menos los casos recuperados (`altas`) y fallecimientos.
+* `Variación`: es la diferencia entre los datos de un día y los del día anterior.
+
 
 References
 =====================================  
