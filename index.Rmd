@@ -1,5 +1,5 @@
 ---
-title: "COVID-19 in Spain"
+title: "COVID-19 Dashboard"
 output: 
   flexdashboard::flex_dashboard:
     theme: flatly
@@ -170,33 +170,6 @@ plot_ly(data = nacional_covid19) %>%
   
 ```
 
-### Variación Columnas
-```{r}
-plot_ly(data = nacional_covid19) %>% 
-  add_trace(x = ~ fecha,
-            y = ~ variacion_casos,
-            type = "bar",
-            # mode = "lines+markers",
-            name = "Variación de casos") %>% 
-  layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
-         annotations = list(
-           vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
-           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
-           caption("Datos: Ministerio de Sanidad a través de Datadista")),
-         title = "Evolución de variacion de casos del COVID-19 en España",
-         yaxis = list(title = "Número de casos"),
-         xaxis = list(title = "Fecha"),
-         legend = list(x = 0.1, y = 0.9),
-         hovermode = "compare")  
-  
-```
-
-Datos
-=====================================  
-
-Row
------------------------------------------------------------------------
-
 ### Tabla de datos
 
 ```{r}
@@ -243,3 +216,61 @@ datatable(nacional_covid19,
     backgroundPosition = 'center')
 
 ```
+
+### Fuente de datos
+
+Para los gráficos totales de España se han utilizado las siguientes fuentes de datos:
+
+* [Ministerio de Sanidad a través de Datadista](https://github.com/datadista/datasets/tree/master/COVID%2019)
+
+References
+=====================================  
+
+#### Dashboards and data visualizations
+
+Here's a list of other resources with data visualization regarding COVID that are far better and more interesting that this dashboard:
+
+* [Coronavirus Dashboard](https://ramikrispin.github.io/coronavirus_dashboard/) (Rami Krispin): a dashboard providing figures, plots and maps tracking COVID evolution in different countries. It is also the dashboard I ~~shamelessly copied~~ drew the inspiration from.
+* [Coronavirus tracked: the latest figures as the pandemic spreads](Financial Times)
+* https://virusncov.com/covid-statistics/
+
+**Spain:**
+
+* [Propagación del COVID-19 en España. Análisis por comunidades autónomas y provincias ](https://lab.montera34.com/covid19/) (Montera34): a series of exhaustive plots of the evolution of COVID19 in Spain and its Autonomous Regions, Italy and France. ([source](https://code.montera34.com:4443/numeroteca/covid19/-/tree/master))
+* https://covid19tracking.narrativa.com/
+* [Situación epidemiológica del coronavirus (COVID-19) en Castilla y León](https://analisis.datosabiertos.jcyl.es/pages/coronavirus/#situacin-actual) (Castilla y León)
+* https://www.euskadi.eus/contenidos/informacion/boletin_coronavirus/es_def/adjuntos/22_marzo_Boletin.pdf
+#### Datasets
+
+* [Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) Coronavirus repository]()
+* [Coronavirus R Package](https://github.com/RamiKrispin/coronavirus) (Rami Krispin): R-package providing an updated dataset. The raw data pulled and arranged by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from the following resources:
+
+    * World Health Organization (WHO): https://www.who.int/
+    * DXY.cn. Pneumonia. 2020. http://3g.dxy.cn/newh5/view/pneumonia.
+    * BNO News: https://bnonews.com/index.php/2020/02/the-latest-coronavirus-cases/
+    * National Health Commission of the People’s Republic of China (NHC): http:://www.nhc.gov.cn/xcs/yqtb/list_gzbd.shtml
+    * China CDC (CCDC): http:://weekly.chinacdc.cn/news/TrackingtheEpidemic.htm
+    * Hong Kong Department of Health: https://www.chp.gov.hk/en/features/102465.html
+    * Macau Government: https://www.ssm.gov.mo/portal/
+    * Taiwan CDC: https://sites.google.com/cdc.gov.tw/2019ncov/taiwan?authuser=0
+    * US CDC: https://www.cdc.gov/coronavirus/2019-ncov/index.html
+    * Government of Canada: https://www.canada.ca/en/public-health/services/diseases/coronavirus.html
+    * Australia Government Department of Health: https://www.health.gov.au/news/coronavirus-update-at-a-glance
+    * European Centre for Disease Prevention and Control (ECDC): https://www.ecdc.europa.eu/en/geographical-distribution-2019-ncov-cases 
+ 
+
+Countries' comparison:
+
+* [Measures taken by different countries](https://analisi.transparenciacatalunya.cat/Salut/Restriccions-per-prevenir-el-contagi-del-Covid-19-/cd4m-r23x) (Generalitat de Catalunya)
+
+
+About
+=====================================  
+
+#### Sobre el dashboard
+
+Este dashboard no aporta apenas nada nuevo que no hayan hecho otros (ver menú ["Referencias"](#references)), por tanto más que aportar nuevo conocimiento sobre la expansión del COVID en España. No obstante, me apetecía hacerlo para aprender a utilizar herramientas y visualizaciones que no había podido utilizar hasta ahora (gráficos interactivos, tablas de datos, sitio estático en github pages...). Así pues, si tiene un valor relativo para la mayoría de gente, tiene un gran valor para su autor
+
+* Código fuente: https://github.com/ccamara/covid_spain/
+* Autoría: [Carlos Cámara](https://carloscamara.es)
+* Licencia: MIT
