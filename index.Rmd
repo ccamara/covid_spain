@@ -20,18 +20,18 @@ nacional_covid19 <- read.csv("https://raw.githubusercontent.com/datadista/datase
   mutate(activos = casos - altas - fallecimientos) %>% 
   mutate(rownum = row_number()) %>% 
   mutate(casos_anteriores = ifelse(rownum == 1, NA, dplyr::lag(casos))) %>% 
-  mutate(incremento_casos = casos - casos_anteriores) %>% 
-  mutate(incremento_uci = ifelse(rownum == 1, NA, 
+  mutate(variación_casos = casos - casos_anteriores) %>% 
+  mutate(variación_uci = ifelse(rownum == 1, NA, 
                                      ingresos_uci - dplyr::lag(ingresos_uci))) %>% 
-  mutate(incremento_activos = ifelse(rownum == 1, NA, 
+  mutate(variación_activos = ifelse(rownum == 1, NA, 
                                      activos - dplyr::lag(activos))) %>% 
-  mutate(incremento_altas = ifelse(rownum == 1, NA, 
+  mutate(variación_altas = ifelse(rownum == 1, NA, 
                                      altas - dplyr::lag(altas))) %>% 
-  mutate(incremento_fallecimientos = ifelse(rownum == 1, NA, 
+  mutate(variación_fallecimientos = ifelse(rownum == 1, NA, 
                                      fallecimientos - dplyr::lag(fallecimientos))) %>% 
-  select(fecha, casos, incremento_casos, ingresos_uci, incremento_uci, altas,
-         incremento_altas, fallecimientos, incremento_fallecimientos, activos,
-         incremento_activos) %>% 
+  select(fecha, casos, variación_casos, ingresos_uci, variación_uci, altas,
+         variación_altas, fallecimientos, variación_fallecimientos, activos,
+         variación_activos) %>% 
   dplyr::arrange(desc(fecha))
   
 
@@ -94,36 +94,36 @@ Gráficos España
 Row {.tabset .tabset-fade}
 -----------------------------------------------------------------------
 
-### Incremento
+### Variación
 
 ```{r}
 plot_ly(data = nacional_covid19) %>% 
   add_trace(x = ~ fecha,
-            y = ~ incremento_casos,
+            y = ~ variación_casos,
             type = "scatter",
             mode = "lines+markers",
-            name = "Incremento de casos") %>% 
+            name = "Variación de casos") %>% 
     add_trace(x = ~ fecha,
-            y = ~ incremento_activos,
+            y = ~ variación_activos,
             type = "scatter",
             mode = "lines+markers",
-            name = "Incremento de casos activos") %>% 
+            name = "Variación de casos activos") %>% 
     add_trace(x = ~ fecha,
-            y = ~ incremento_altas,
+            y = ~ variación_altas,
             type = "scatter",
             mode = "lines+markers",
-            name = "Incremento de casos recuperados") %>% 
+            name = "Variación de casos recuperados") %>% 
   add_trace(x = ~ fecha,
-            y = ~ incremento_fallecimientos,
+            y = ~ variación_fallecimientos,
             type = "scatter",
             mode = "lines+markers",
-            name = "Incremento de fallecimientos") %>% 
+            name = "Variación de fallecimientos") %>% 
   layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
          annotations = list(
            caption("Datos: Ministerio de Sanidad a través de Datadista"),
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
            vannotation("Confinamiento obligatorio", "2020-3-16", 0.75)),
-         title = "Evolución de incremento de casos del COVID-19 con respecto al día anterior, en España",
+         title = "Evolución de variación de casos del COVID-19 con respecto al día anterior, en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
          legend = list(x = 0.1, y = 0.9),
@@ -170,20 +170,20 @@ plot_ly(data = nacional_covid19) %>%
   
 ```
 
-### Incremento Columnas
+### Variación Columnas
 ```{r}
 plot_ly(data = nacional_covid19) %>% 
   add_trace(x = ~ fecha,
-            y = ~ incremento_casos,
+            y = ~ variación_casos,
             type = "bar",
             # mode = "lines+markers",
-            name = "Incremento de casos") %>% 
+            name = "Variación de casos") %>% 
   layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
          annotations = list(
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
            vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
            caption("Datos: Ministerio de Sanidad a través de Datadista")),
-         title = "Evolución de incremento de casos del COVID-19 en España",
+         title = "Evolución de variación de casos del COVID-19 en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
          legend = list(x = 0.1, y = 0.9),
@@ -200,6 +200,11 @@ Row
 ### Tabla de datos
 
 ```{r}
-datatable(nacional_covid19)
+datatable(nacional_covid19, 
+          colnames = c('Fecha', 'Casos', 'Variación casos', 
+                       'Ingresos UCI', 'Variación UCI', 
+                       'Altas', 'Variación de altas',
+                       'Fallecimientos', 'Variación de fallecimientos')
+          )
 
 ```
