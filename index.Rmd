@@ -13,7 +13,12 @@ library(flexdashboard)
 library(coronavirus)
 library(DT)
 library(plotly)
-library(ztable)
+
+color_total <- "#1F77B4"
+color_active <- "#FF7F0E"
+color_uci <- "pink"
+color_recovered <- "#2C9F2C"
+color_deaths <- "rgba(214, 39, 40, 1)"
 
 nacional_covid19 <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv") %>% 
   mutate(fecha = as.Date(fecha, format = "%Y-%m-%d")) %>% 
@@ -175,25 +180,28 @@ plot_ly(data = nacional_covid19) %>%
 ```
 
 
-### Evolución y Composición de casos
+### Composición de casos por día
 
 ```{r}
-plot_ly(data = nacional_covid19,
-        x = ~ fecha,
-        y = ~ variacion_casos,
-        # text =  ~ confirmed, 
-        # textposition = 'auto',
-        type = "bar", 
-        name = "Active") %>%
-   add_trace(x = ~ fecha,
-            y = ~ variacion_activos,
-
-            name = "Variación de casos activos") %>% 
-  add_trace(x = ~ fecha,
-            y = ~ variacion_altas,
-            name = "Variación de casos recuperados") %>% 
+  plot_ly(data = nacional_covid19,
+          x = ~ fecha,
+          y = ~ variacion_activos,
+          # text = ~variacion_activos, 
+          # textposition = 'auto',
+          type = "bar", 
+          marker = list(color = color_active),
+          name = "Variación de casos activos") %>% 
+    add_trace(x = ~ fecha,
+              y = ~ variacion_altas,
+              # text = ~variacion_altas,
+              # textposition = "auto",
+              marker = list(color = color_recovered),
+              name = "Variación de casos recuperados") %>% 
   add_trace(x = ~ fecha,
             y = ~ variacion_fallecimientos,
+            # text = ~variacion_fallecimientos,
+            # textposition = "auto",
+            marker = list(color = color_deaths),
             name = "Variación de fallecimientos") %>% 
   layout(barmode = 'stack',
          shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
@@ -201,7 +209,7 @@ plot_ly(data = nacional_covid19,
            caption("Datos: Ministerio de Sanidad a través de Datadista"),
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
            vannotation("Confinamiento obligatorio", "2020-3-16", 0.75)),
-         title = "Composición de variacion de casos del COVID-19 con respecto al día anterior, en España",
+         title = "Composición de casos del COVID-19 con respecto al día anterior, en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
          legend = list(x = 0.1, y = 0.9),
