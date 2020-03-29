@@ -40,6 +40,10 @@ ccaa_covid19_casos <- read.csv("https://raw.githubusercontent.com/datadista/data
 ccaa_covid19_fallecidos <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_fallecidos.csv")
 ccaa_covid19_uci <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_uci.csv") 
 
+# data_uk <- read.csv("https://www.arcgis.com/sharing/rest/content/items/ca796627a2294c51926865748c4a56e8/data")
+# 
+# data_uk2 <-  read_excel("https://www.arcgis.com/sharing/rest/content/items/e5fd11150d274bebaaf8fe2a7a2bda11/data")
+
 data("coronavirus")
 coronavirus_es <- coronavirus %>% 
   filter(Country.Region == "Spain")
@@ -102,7 +106,7 @@ plot_ly(data = nacional_covid19) %>%
             y = ~ variacion_casos,
             type = "scatter",
             mode = "lines+markers",
-            name = "Variación de casos") %>% 
+            name = "Variación de contagios") %>% 
     add_trace(x = ~ fecha,
             y = ~ variacion_activos,
             type = "scatter",
@@ -141,7 +145,7 @@ plot_ly(data = nacional_covid19) %>%
             y = ~ casos,
             type = "scatter",
             mode = "lines+markers",
-            name = "Casos detectados") %>% 
+            name = "Contagios detectados") %>% 
   add_trace(x = ~ fecha,
             y = ~ activos,
             type = "scatter",
@@ -174,7 +178,7 @@ plot_ly(data = nacional_covid19) %>%
 
 ```{r}
 datatable(nacional_covid19, 
-          colnames = c('Fecha', 'Casos', 'Variación casos', 
+          colnames = c('Fecha', 'Casos', 'Variación contagios', 
                        'Ingresos UCI', 'Variación UCI', 
                        'Altas', 'Variación de altas',
                        'Fallecimientos', 'Variación de fallecimientos',
@@ -234,13 +238,16 @@ Para los gráficos totales de España se han utilizado las siguientes fuentes de
 References
 =====================================  
 
-#### Dashboards and data visualizations
+#### Infographics, dashboards and data visualizations
 
 Here's a list of other resources with data visualization regarding COVID that are far better and more interesting that this dashboard:
 
 * [Coronavirus Dashboard](https://ramikrispin.github.io/coronavirus_dashboard/) (Rami Krispin): a dashboard providing figures, plots and maps tracking COVID evolution in different countries. It is also the dashboard I ~~shamelessly copied~~ drew the inspiration from.
 * [Coronavirus tracked: the latest figures as the pandemic spreads](Financial Times)
 * https://virusncov.com/covid-statistics/
+* https://osf.io/abx7s/
+* [How the virus got out](https://www.nytimes.com/interactive/2020/03/22/world/coronavirus-spread.html) (New York Times)
+* [Why outbreaks like coronavirus spread exponentially, and how to “flatten the curve” ](https://www.washingtonpost.com/graphics/2020/world/corona-simulator/?fbclid=IwAR0rKKZMquiLjYjVFB3NbFv6BUanfafatLT2w1Sj5UH0zRu6qDzFKw5JBiE)
 
 **Spain:**
 
@@ -248,6 +255,7 @@ Here's a list of other resources with data visualization regarding COVID that ar
 * https://covid19tracking.narrativa.com/
 * [Situación epidemiológica del coronavirus (COVID-19) en Castilla y León](https://analisis.datosabiertos.jcyl.es/pages/coronavirus/#situacin-actual) (Castilla y León)
 * https://www.euskadi.eus/contenidos/informacion/boletin_coronavirus/es_def/adjuntos/22_marzo_Boletin.pdf
+
 #### Datasets
 
 * [Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) Coronavirus repository]()
@@ -271,6 +279,9 @@ Countries' comparison:
 
 * [Measures taken by different countries](https://analisi.transparenciacatalunya.cat/Salut/Restriccions-per-prevenir-el-contagi-del-Covid-19-/cd4m-r23x) (Generalitat de Catalunya)
 
+Others:
+
+* [Here’s How Computer Models Simulate the Future Spread of New Coronavirus](https://www.scientificamerican.com/article/heres-how-computer-models-simulate-the-future-spread-of-new-coronavirus/)
 
 About
 =====================================  

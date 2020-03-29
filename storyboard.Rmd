@@ -4,8 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     storyboard: true
     theme: journal
-    social: menu
-    source_code: embed
+    
 
 ---
 
