@@ -12,9 +12,11 @@ output:
 library(flexdashboard)
 library(DT)
 library(plotly)
+library(tmap)
 
 source("data_preparations.R")
 
+# Variables.
 color_total <- "#1F77B4"
 color_active <- "#FF7F0E"
 color_uci <- "pink"
@@ -22,7 +24,7 @@ color_recovered <- "#2C9F2C"
 color_deaths <- "rgba(214, 39, 40, 1)"
 
 
-
+# Plot.ly functions.
 vline <- function(x = 0, color = "grey") {
   list(
     type = "line", 
@@ -39,15 +41,6 @@ vannotation <- function(mytext,  xcoord, ycoord = 0) {
   list(yref = 'paper', 
        xref = "x", y = ycoord, x = xcoord, text = mytext)
 }
-
-# caption <- function(mytext) {
-#   list(x = 1, y = -0.1, text = mytext, 
-#       showarrow = F, 
-#       xref = 'paper', yref = 'paper', 
-#       xanchor = 'right', yanchor = 'top', xshift = 0, yshift = 0,
-#       font = list(size = 10, color = "grey")
-#       )
-# }
 
 caption <- function(mytext) {
   list(text = mytext, 
@@ -95,11 +88,14 @@ plot_ly(data = nacional_covid19) %>%
             type = "scatter",
             mode = "lines+markers",
             name = "Variación de fallecimientos") %>% 
-  layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
+  layout(shapes = list(vline("2020-03-13", "grey"), 
+                       vline("2020-03-16", "grey"),
+                       vline("2020-03-30", "grey")),
          annotations = list(
            caption("Datos: Ministerio de Sanidad a través de Datadista"),
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
-           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75)),
+           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
+           vannotation("Únicamente trabajos indispensables", "2020-3-30", 0.90)),
          title = "Evolución de variacion de casos del COVID-19 con respecto al día anterior, en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
@@ -134,11 +130,14 @@ plot_ly(data = nacional_covid19) %>%
             type = "scatter",
             mode = "lines+markers",
             name = "Fallecimientos por COVID19") %>% 
-  layout(shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
+  layout(shapes = list(vline("2020-03-13", "grey"), 
+                       vline("2020-03-16", "grey"),
+                       vline("2020-03-30", "grey")),
          annotations = list(
+           caption("Datos: Ministerio de Sanidad a través de Datadista"),
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
            vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
-           caption("Datos: Ministerio de Sanidad a través de Datadista")),
+           vannotation("Únicamente trabajos indispensables", "2020-3-30", 0.5)),
          title = "Evolución del COVID-19 en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
@@ -172,11 +171,14 @@ plot_ly(data = nacional_covid19) %>%
             marker = list(color = color_deaths),
             name = "Variación de fallecimientos") %>% 
   layout(barmode = 'stack',
-         shapes = list(vline("2020-03-13", "grey"), vline("2020-03-16", "grey")),
+         shapes = list(vline("2020-03-13", "grey"), 
+                       vline("2020-03-16", "grey"),
+                       vline("2020-03-30", "grey")),
          annotations = list(
            caption("Datos: Ministerio de Sanidad a través de Datadista"),
            vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
-           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75)),
+           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
+           vannotation("Únicamente trabajos indispensables", "2020-3-30", 0.90)),
          title = "Composición de casos del COVID-19 con respecto al día anterior, en España",
          yaxis = list(title = "Número de casos"),
          xaxis = list(title = "Fecha"),
@@ -247,6 +249,42 @@ Para los gráficos totales de España se han utilizado las siguientes fuentes de
 
 * `Casos activos`: se calcula a partir del número total de casos de un día, menos los casos recuperados (`altas`) y fallecimientos.
 * `Variación`: es la diferencia entre los datos de un día y los del día anterior.
+
+
+
+Gráficos España por CCAA
+===================================== 
+
+Todavía en proceso... Mostrando resultados del día `r ccaa_covid19$fecha[1]`
+
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Mapa
+
+
+```{r}
+tmap_mode("plot")
+tm_shape(ccaa_covid19_sp) +
+  tm_polygons(c("variacion_casos", "variacion_altas", "variacion_fallecidos",
+                "variacion_activos")) +
+  tm_facets(sync = TRUE, ncol = 2)
+```
+
+
+### Acerca de este gráfico
+
+####  Datos
+
+Para los gráficos totales de España se han utilizado las siguientes fuentes de datos:
+
+* [Ministerio de Sanidad a través de Datadista](https://github.com/datadista/datasets/tree/master/COVID%2019)
+
+#### Definiciones
+
+* `Casos activos`: se calcula a partir del número total de casos de un día, menos los casos recuperados (`altas`) y fallecimientos.
+* `Variación`: es la diferencia entre los datos de un día y los del día anterior.
+
 
 
 References
