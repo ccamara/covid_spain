@@ -61,6 +61,64 @@ caption <- function(mytext) {
 Gráficos España
 =====================================  
 
+Row 
+-----------------------------------------------------------------------
+
+### confirmed {.value-box}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$casos[1], big.mark = "."), 
+         caption = paste0("Casos confirmados (a ", 
+                          nacional_covid19$fecha[1], ")"), 
+         icon = "fas fa-virus", 
+         color = color_total)
+```
+
+### active {.value-box}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$activos[1], big.mark = "."), 
+         caption = paste0("Casos activos (a ", 
+                          nacional_covid19$fecha[1], ")"), 
+         icon = "fas fal-bacteria", 
+         color = color_active)
+```
+
+### uci {.value-box}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$ingresos_uci[1], big.mark = "."), 
+         caption = paste0("Casos hospitalizados (a ", 
+                          nacional_covid19$fecha[1], ")"), 
+         icon = "fas fa-ambulance", 
+         color = color_uci)
+```
+
+### recovered {.value-box}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$altas[1], big.mark = "."), 
+         caption = paste0("Personas recuperadas (a ", 
+                          nacional_covid19$fecha[1], ")"), 
+         icon = "fas fa-user-md", 
+         color = color_recovered)
+```
+
+### deaths {.value-box}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$fallecimientos[1], big.mark = "."), 
+         caption = paste0("Fallecimientos (a ", 
+                          nacional_covid19$fecha[1], ")"), 
+         icon = "fas fa-coffin", 
+         color = color_deaths)
+```
+
 Row {.tabset .tabset-fade}
 -----------------------------------------------------------------------
 
@@ -255,7 +313,20 @@ Para los gráficos totales de España se han utilizado las siguientes fuentes de
 Gráficos España por CCAA
 ===================================== 
 
-Todavía en proceso... Mostrando resultados del día `r ccaa_covid19$fecha[1]`
+Row 
+-----------------------------------------------------------------------
+
+### active {.value-box}
+
+```{r}
+
+valueBox(value = "Todavía en proceso...", 
+         caption = paste("Mostrando resultados del día", ccaa_covid19$fecha[1],
+                         sep = " "), 
+         icon = "fas fa-exclamation-triangle", 
+         color = "orange")
+```
+
 
 Row {.tabset .tabset-fade}
 -----------------------------------------------------------------------
