@@ -82,7 +82,7 @@ valueBox(value = format(nacional_covid19$casos[1], big.mark = "."),
 valueBox(value = format(nacional_covid19$activos[1], big.mark = "."), 
          caption = paste0("Casos activos (a ", 
                           nacional_covid19$fecha[1], ")"), 
-         icon = "fas fal-bacteria", 
+         icon = "fas fa-viruses", 
          color = color_active)
 ```
 
