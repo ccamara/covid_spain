@@ -23,6 +23,7 @@ color_uci <- "pink"
 color_recovered <- "#2C9F2C"
 color_deaths <- "rgba(214, 39, 40, 1)"
 
+spain_population <- 47650000
 
 # Plot.ly functions.
 vline <- function(x = 0, color = "grey") {
@@ -70,7 +71,12 @@ Row
 
 valueBox(value = format(nacional_covid19$casos[1], big.mark = "."), 
          caption = paste0("Casos confirmados (a ", 
-                          nacional_covid19$fecha[1], ")"), 
+                          nacional_covid19$fecha[1], "), de un total de ",
+                          format(spain_population, big.mark = "."), 
+                          " habitantes, lo cual representa un ",
+                          round(nacional_covid19$casos[1]/spain_population*100, 
+                                digits = 2),
+                          "% de la población total."), 
          icon = "fas fa-virus", 
          color = color_total)
 ```
@@ -81,7 +87,9 @@ valueBox(value = format(nacional_covid19$casos[1], big.mark = "."),
 
 valueBox(value = format(nacional_covid19$activos[1], big.mark = "."), 
          caption = paste0("Casos activos (a ", 
-                          nacional_covid19$fecha[1], ")"), 
+                          nacional_covid19$fecha[1], "), lo cual representa un",
+                          round(nacional_covid19$activos[1]/nacional_covid19$casos[1]*100, 
+                                digits = 2), "% respecto al total de casos."), 
          icon = "fas fa-viruses", 
          color = color_active)
 ```
@@ -92,7 +100,10 @@ valueBox(value = format(nacional_covid19$activos[1], big.mark = "."),
 
 valueBox(value = format(nacional_covid19$ingresos_uci[1], big.mark = "."), 
          caption = paste0("Casos hospitalizados (a ", 
-                          nacional_covid19$fecha[1], ")"), 
+                          nacional_covid19$fecha[1], "), lo cual representa un",
+                          round(nacional_covid19$ingresos_uci[1] / nacional_covid19$casos[1]
+                                * 100, 
+                                digits = 2), "% respecto al total de casos."),
          icon = "fas fa-ambulance", 
          color = color_uci)
 ```
@@ -103,7 +114,9 @@ valueBox(value = format(nacional_covid19$ingresos_uci[1], big.mark = "."),
 
 valueBox(value = format(nacional_covid19$altas[1], big.mark = "."), 
          caption = paste0("Personas recuperadas (a ", 
-                          nacional_covid19$fecha[1], ")"), 
+                          nacional_covid19$fecha[1], "), lo cual representa un",
+                          round(nacional_covid19$altas[1]/nacional_covid19$casos[1]*100, 
+                                digits = 2), "% respecto al total de casos."),
          icon = "fas fa-user-md", 
          color = color_recovered)
 ```
@@ -114,7 +127,10 @@ valueBox(value = format(nacional_covid19$altas[1], big.mark = "."),
 
 valueBox(value = format(nacional_covid19$fallecimientos[1], big.mark = "."), 
          caption = paste0("Fallecimientos (a ", 
-                          nacional_covid19$fecha[1], ")"), 
+                          nacional_covid19$fecha[1], "), lo cual representa un",
+                          round(nacional_covid19$fallecimientos[1] / 
+                                  nacional_covid19$casos[1] * 100, 
+                                digits = 2), "% respecto al total de casos."),
          icon = "fas fa-coffin", 
          color = color_deaths)
 ```
