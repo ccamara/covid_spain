@@ -23,7 +23,7 @@ color_uci <- "pink"
 color_recovered <- "#2C9F2C"
 color_deaths <- "rgba(214, 39, 40, 1)"
 
-spain_population <- 47650000
+spain_population <- 47100396
 
 # Plot.ly functions.
 vline <- function(x = 0, color = "grey") {
@@ -317,14 +317,25 @@ datatable(nacional_covid19,
 
 Para los gráficos totales de España se han utilizado las siguientes fuentes de datos:
 
-* [Ministerio de Sanidad a través de Datadista](https://github.com/datadista/datasets/tree/master/COVID%2019)
-
+* Datos de casos nacionales [Ministerio de Sanidad a través de Datadista](https://github.com/datadista/datasets/tree/master/COVID%2019)
+* Población total de España: [Instituto Nacional de Estadística (INE)](https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736176951&menu=ultiDatos&idp=1254735572981)
+  
 #### Definiciones
 
+Tipología de casos:
+
+* `Casos confirmados`: casos confirmados por el Ministerio de Sanidad como infectados por la COVID19. **No reflejan todos los casos infectados reales.**
+* `Casos recuperados`: Personas curadas.
+* `Casos hospitalizados`: Casos acumulados que han precisado ingreso en UCI
+* `Fallecidos`: Casos confirmados de fallecimiento por COVID-19[^fallecidos]
 * `Casos activos`: se calcula a partir del número total de casos de un día, menos los casos recuperados (`altas`) y fallecimientos.
-* `Variación`: es la diferencia entre los datos de un día y los del día anterior.
 
+Los datos se muestran en dos maneras distintas:
 
+* Casos acumulados: son los casos de cada tipo acumulados desde que se empezaron a contabilizar.
+* Variación de casos: es la diferencia entre los datos de cada tipo entre un día concreto y los del mismo tipo del día anterior.
+
+[^fallecidos]: La manera en que se considera que una persona ha fallecido como consecuencia de la COVID-19 varían de un país a otro y de una comunidad a otra. (indicar fuente)
 
 Gráficos España por CCAA
 ===================================== 
