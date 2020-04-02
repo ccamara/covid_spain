@@ -335,7 +335,7 @@ Tipología de casos:
 * `Casos recuperados`: Personas curadas.
 * `Casos hospitalizados`: Casos acumulados que han precisado ingreso en UCI
 * `Fallecidos`: Casos confirmados de fallecimiento por COVID-19[^fallecidos]
-* `Casos activos`: se calcula a partir del número total de casos de un día, menos los casos recuperados (`altas`) y fallecimientos.
+* `Casos activos`: se calcula a partir del número total de casos diagnosticados de un día, menos los casos recuperados (`altas`) y fallecimientos. Los casos activos no implica necesariamente que estén hospitalizados.
 
 Los datos se muestran en dos maneras distintas:
 
