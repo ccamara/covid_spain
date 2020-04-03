@@ -75,12 +75,10 @@ Row
 ```{r}
 
 valueBox(value = format(nacional_covid19$casos[1], big.mark = "."), 
-         caption = paste0("Casos confirmados de un total de ",
-                          format(spain_population, big.mark = "."), 
-                          " habitantes, lo cual representa un <b>",
+         caption = paste0("Casos confirmados, lo cual representa un <b>",
                           round(nacional_covid19$casos[1]/spain_population*100,  
                                 digits = 2),
-                          "% de la población total.</b> <small>Periodo: ",
+                          "% de la población total de España.</b> <small>Periodo: ",
                           nacionalcovid19_dates, "</small>"), 
          icon = "fas fa-virus", 
          color = color_total)
