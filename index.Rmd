@@ -70,7 +70,7 @@ Gráficos España
 Row 
 -----------------------------------------------------------------------
 
-### confirmed {.value-box}
+### confirmed {.value-box .no-mobile}
 
 ```{r}
 
@@ -80,13 +80,13 @@ valueBox(value = format(nacional_covid19$casos[1], big.mark = "."),
                           " habitantes, lo cual representa un <b>",
                           round(nacional_covid19$casos[1]/spain_population*100,  
                                 digits = 2),
-                          "% de la población total.</b> <small>Periodo:",
+                          "% de la población total.</b> <small>Periodo: ",
                           nacionalcovid19_dates, "</small>"), 
          icon = "fas fa-virus", 
          color = color_total)
 ```
 
-### active {.value-box}
+### active {.value-box .no-mobile}
 
 ```{r}
 
@@ -100,7 +100,7 @@ valueBox(value = format(nacional_covid19$activos[1], big.mark = "."),
          color = color_active)
 ```
 
-### uci {.value-box}
+### uci {.value-box .no-mobile}
 
 ```{r}
 
@@ -112,7 +112,7 @@ valueBox(value = format(nacional_covid19$ingresos_uci[1], big.mark = "."),
          color = color_uci)
 ```
 
-### recovered {.value-box}
+### recovered {.value-box .no-mobile}
 
 ```{r}
 
@@ -126,7 +126,7 @@ valueBox(value = format(nacional_covid19$altas[1], big.mark = "."),
          color = color_recovered)
 ```
 
-### deaths {.value-box}
+### deaths {.value-box}{.no-mobile}
 
 ```{r}
 
