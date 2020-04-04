@@ -94,7 +94,7 @@ valueBox(value = format(nacional_covid19$activos[1], big.mark = "."),
                                 digits = 2), 
                           "% respecto al total de casos</b>. <small>Periodo: ",
                           nacionalcovid19_dates, "</small>"), 
-         icon = "fas fa-viruses", 
+         icon = "fas fa-procedures", 
          color = color_active)
 ```
 
