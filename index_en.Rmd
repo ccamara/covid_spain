@@ -1,0 +1,450 @@
+---
+title: "COVID-19 Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: flatly
+    orientation: rows
+    social: menu  
+    source_code: embed
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(DT)
+library(plotly)
+library(tmap)
+
+source("data_preparations.R")
+
+# Variables.
+color_total <- "#1F77B4"
+color_active <- "#FF7F0E"
+color_uci <- "pink"
+color_recovered <- "#2C9F2C"
+color_deaths <- "rgba(214, 39, 40, 1)"
+
+spain_population <- 47100396
+
+# calculate variables.
+nacionalcovid19_dates <- paste0(format(
+  as.Date(nacional_covid19$fecha[nrow(nacional_covid19)]), "%d/%m/%Y"), 
+  " - ", format(as.Date(nacional_covid19$fecha[1]), "%d/%m/%Y"))
+
+# Plot.ly functions.
+vline <- function(x = 0, color = "grey") {
+  list(
+    type = "line", 
+    y0 = 0, 
+    y1 = 1, 
+    yref = "paper",
+    x0 = x, 
+    x1 = x, 
+    line = list(color = color, dash = 'dot')
+  )
+}
+
+vannotation <- function(mytext,  xcoord, ycoord = 0) {
+  list(yref = 'paper', 
+       xref = "x", y = ycoord, x = xcoord, text = mytext)
+}
+
+caption <- function(mytext) {
+  list(text = mytext, 
+       x = 1,
+       y = -0.05,
+       showarrow = F, 
+       xref = 'paper', yref = 'paper', 
+       xanchor = "right",
+       yanchor = "bottom",
+       # xanchor = 'right', yanchor = 'top', xshift = 0, yshift = 0,
+       font = list(size = 10, color = "grey")
+       )
+}
+
+
+```
+
+Gráficos España
+=====================================  
+
+Row 
+-----------------------------------------------------------------------
+
+### confirmed {.value-box .no-mobile}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$casos[1], big.mark = "."), 
+         caption = paste0("<b>Confirmed cases</b>, accounting for a <b>",
+                          round(nacional_covid19$casos[1]/spain_population*100,  
+                                digits = 2),
+                          "% of total population in Spain.</b> <small>Period: ",
+                          nacionalcovid19_dates, "</small>"), 
+         icon = "fas fa-virus", 
+         color = color_total)
+```
+
+### active {.value-box .no-mobile}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$activos[1], big.mark = "."), 
+         caption = paste0("<b>Active cases</b>, accounting for a <b>",
+                          round(nacional_covid19$activos[1]/nacional_covid19$casos[1]*100, 
+                                digits = 2), 
+                          "% of total cases</b>. <small>Period: ",
+                          nacionalcovid19_dates, "</small>"), 
+         icon = "fas fa-procedures", 
+         color = color_active)
+```
+
+### uci {.value-box .no-mobile}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$ingresos_uci[1], big.mark = "."), 
+         caption = paste0("<b>Hospitalized cases</b>",
+                          "<small>Period: ",
+                          nacionalcovid19_dates, "</small>"),
+         icon = "fas fa-ambulance", 
+         color = color_uci)
+```
+
+### recovered {.value-box .no-mobile}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$altas[1], big.mark = "."), 
+         caption = paste0("<b>Recovered cases</b>, accounting for a <b>",
+                          round(nacional_covid19$altas[1]/nacional_covid19$casos[1]*100, 
+                                digits = 2), 
+                          "% of total cases</b>. <small>Period: ",
+                          nacionalcovid19_dates, "</small>"),
+         icon = "fas fa-user-md", 
+         color = color_recovered)
+```
+
+### deaths {.value-box}{.no-mobile}
+
+```{r}
+
+valueBox(value = format(nacional_covid19$fallecimientos[1], big.mark = "."), 
+         caption = paste0("<b>Deaths by COVID-19</b>, accounting for a <b>",
+                          round(nacional_covid19$fallecimientos[1] / 
+                                  nacional_covid19$casos[1] * 100, 
+                                digits = 2),
+                          "% of total cases</b>. <small>Period: ",
+                          nacionalcovid19_dates, "</small>"),
+         icon = "fas fa-coffin", 
+         color = color_deaths)
+```
+
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Variación
+
+```{r}
+plot_ly(data = nacional_covid19) %>% 
+  add_trace(x = ~ fecha,
+            y = ~ variacion_casos,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Variación de contagios") %>% 
+    add_trace(x = ~ fecha,
+            y = ~ variacion_activos,
+            type = "scatter",
+            mode = "lines+markers",
+            # line = list(shape = "spline"),
+            name = "Variación de casos activos") %>% 
+    add_trace(x = ~ fecha,
+            y = ~ variacion_altas,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Variación de casos recuperados") %>% 
+  add_trace(x = ~ fecha,
+            y = ~ variacion_fallecimientos,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Variación de fallecimientos") %>% 
+  layout(shapes = list(vline("2020-03-13", "grey"), 
+                       vline("2020-03-16", "grey"),
+                       vline("2020-03-30", "grey")),
+         annotations = list(
+           caption("Datos: Ministerio de Sanidad a través de Datadista"),
+           vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
+           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
+           vannotation("Únicamente trabajos indispensables", "2020-3-30", 0.90)),
+         title = "Evolución de variacion de casos del COVID-19 con respecto al día anterior, en España",
+         yaxis = list(title = "Número de casos"),
+         xaxis = list(title = "Fecha"),
+         legend = list(x = 0.1, y = 0.9),
+         hovermode = "compare")  
+
+
+```
+
+### Acumulados
+
+```{r}
+
+plot_ly(data = nacional_covid19) %>% 
+  add_trace(x = ~ fecha,
+            y = ~ casos,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Contagios detectados") %>% 
+  add_trace(x = ~ fecha,
+            y = ~ activos,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Casos activos") %>% 
+   add_trace(x = ~ fecha,
+            y = ~ altas,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Casos recuperados") %>% 
+  add_trace(x = ~ fecha,
+            y = ~ fallecimientos,
+            type = "scatter",
+            mode = "lines+markers",
+            name = "Fallecimientos por COVID19") %>% 
+  layout(shapes = list(vline("2020-03-13", "grey"), 
+                       vline("2020-03-16", "grey"),
+                       vline("2020-03-30", "grey")),
+         annotations = list(
+           caption("Datos: Ministerio de Sanidad a través de Datadista"),
+           vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
+           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
+           vannotation("Únicamente trabajos indispensables", "2020-3-30", 0.5)),
+         title = "Evolución del COVID-19 en España",
+         yaxis = list(title = "Número de casos"),
+         xaxis = list(title = "Fecha"),
+         legend = list(x = 0.1, y = 0.9),
+         hovermode = "compare")  
+  
+```
+
+
+### Composición de casos por día
+
+```{r}
+  plot_ly(data = nacional_covid19,
+          x = ~ fecha,
+          y = ~ variacion_activos,
+          # text = ~variacion_activos, 
+          # textposition = 'auto',
+          type = "bar", 
+          marker = list(color = color_active),
+          name = "Variación de casos activos") %>% 
+    add_trace(x = ~ fecha,
+              y = ~ variacion_altas,
+              # text = ~variacion_altas,
+              # textposition = "auto",
+              marker = list(color = color_recovered),
+              name = "Variación de casos recuperados") %>% 
+  add_trace(x = ~ fecha,
+            y = ~ variacion_fallecimientos,
+            # text = ~variacion_fallecimientos,
+            # textposition = "auto",
+            marker = list(color = color_deaths),
+            name = "Variación de fallecimientos") %>% 
+  layout(barmode = 'stack',
+         shapes = list(vline("2020-03-13", "grey"), 
+                       vline("2020-03-16", "grey"),
+                       vline("2020-03-30", "grey")),
+         annotations = list(
+           caption("Datos: Ministerio de Sanidad a través de Datadista"),
+           vannotation("Confinamiento voluntario", "2020-3-13", 0.5),
+           vannotation("Confinamiento obligatorio", "2020-3-16", 0.75),
+           vannotation("Únicamente trabajos indispensables", "2020-3-30", 0.90)),
+         title = "Composición de casos del COVID-19 con respecto al día anterior, en España",
+         yaxis = list(title = "Número de casos"),
+         xaxis = list(title = "Fecha"),
+         legend = list(x = 0.1, y = 0.9),
+         hovermode = "compare")  
+
+
+```
+
+
+
+### Tabla de datos
+
+```{r}
+datatable(nacional_covid19, 
+          colnames = c('Fecha', 'Casos', 'Variación contagios', 
+                       'Ingresos UCI', 'Variación UCI', 
+                       'Altas', 'Variación de altas',
+                       'Fallecimientos', 'Variación de fallecimientos',
+                       'Casos activos', 'Variación de activos'),
+          options = list(
+            # columnDefs = list(list(className = 'dt-center', targets = 5)),
+            pageLength = 20, 
+            lengthMenu = c(10, 20, 30))) %>% 
+  formatRound(columns = 2:11, digits = 0, mark = ".", dec.mark = "") %>% 
+  formatStyle(
+    'variacion_casos',
+    background = styleColorBar(nacional_covid19$variacion_casos, 'steelblue'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center') %>% 
+  formatStyle(
+    'variacion_uci',
+    background = styleColorBar(nacional_covid19$variacion_uci, 'pink'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center') %>% 
+  formatStyle(
+    'variacion_altas',
+    background = styleColorBar(nacional_covid19$variacion_altas, '#2C9F2C'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center') %>% 
+  formatStyle(
+    'variacion_fallecimientos',
+    background = styleColorBar(nacional_covid19$variacion_fallecimientos, '#D62728'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center') %>% 
+  formatStyle(
+    'variacion_activos',
+    background = styleColorBar(nacional_covid19$variacion_activos, '#FF7F0E'),
+    backgroundSize = '100% 90%',
+    backgroundRepeat = 'no-repeat',
+    backgroundPosition = 'center')
+
+```
+
+### Acerca de este gráfico
+
+####  Datos
+
+Para los gráficos totales de España se han utilizado las siguientes fuentes de datos:
+
+* Datos de casos nacionales [Ministerio de Sanidad a través de Datadista](https://github.com/datadista/datasets/tree/master/COVID%2019)
+* Población total de España: [Instituto Nacional de Estadística (INE)](https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736176951&menu=ultiDatos&idp=1254735572981)
+  
+#### Definiciones
+
+Tipología de casos:
+
+* `Casos confirmados`: casos confirmados por el Ministerio de Sanidad como infectados por la COVID19. **No reflejan todos los casos infectados reales.**
+* `Casos recuperados`: Personas curadas.
+* `Casos hospitalizados`: Casos acumulados que han precisado ingreso en UCI
+* `Fallecidos`: Casos confirmados de fallecimiento por COVID-19[^fallecidos]
+* `Casos activos`: se calcula a partir del número total de casos diagnosticados de un día, menos los casos recuperados (`altas`) y fallecimientos. Los casos activos no implica necesariamente que estén hospitalizados.
+
+Los datos se muestran en dos maneras distintas:
+
+* Casos acumulados: son los casos de cada tipo acumulados desde que se empezaron a contabilizar.
+* Variación de casos: es la diferencia entre los datos de cada tipo entre un día concreto y los del mismo tipo del día anterior.
+
+[^fallecidos]: La manera en que se considera que una persona ha fallecido como consecuencia de la COVID-19 varían de un país a otro y de una comunidad a otra. (indicar fuente)
+
+Gráficos España por CCAA
+===================================== 
+
+Row 
+-----------------------------------------------------------------------
+
+### active {.value-box}
+
+```{r}
+
+valueBox(value = "Todavía en proceso...", 
+         caption = paste("Mostrando resultados del día", ccaa_covid19$fecha[1],
+                         sep = " "), 
+         icon = "fas fa-exclamation-triangle", 
+         color = "orange")
+```
+
+
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Mapa
+
+
+```{r}
+tmap_mode("plot")
+tm_shape(ccaa_covid19_sp) +
+  tm_polygons(c("variacion_casos", "variacion_altas", "variacion_fallecidos",
+                "variacion_activos")) +
+  tm_facets(sync = TRUE, ncol = 2)
+```
+
+
+### Acerca de este gráfico
+
+####  Datos
+
+Para los gráficos totales de España se han utilizado las siguientes fuentes de datos:
+
+* [Ministerio de Sanidad a través de Datadista](https://github.com/datadista/datasets/tree/master/COVID%2019)
+
+#### Definiciones
+
+* `Casos activos`: se calcula a partir del número total de casos de un día, menos los casos recuperados (`altas`) y fallecimientos.
+* `Variación`: es la diferencia entre los datos de un día y los del día anterior.
+
+
+
+References
+=====================================  
+
+#### Infographics, dashboards and data visualizations
+
+Here's a list of other resources with data visualization regarding COVID that are far better and more interesting that this dashboard:
+
+* [Coronavirus Dashboard](https://ramikrispin.github.io/coronavirus_dashboard/) (Rami Krispin): a dashboard providing figures, plots and maps tracking COVID evolution in different countries. It is also the dashboard I ~~shamelessly copied~~ drew the inspiration from.
+* [Coronavirus tracked: the latest figures as the pandemic spreads](Financial Times)
+* https://virusncov.com/covid-statistics/
+* https://osf.io/abx7s/
+* [How the virus got out](https://www.nytimes.com/interactive/2020/03/22/world/coronavirus-spread.html) (New York Times)
+* [Why outbreaks like coronavirus spread exponentially, and how to “flatten the curve” ](https://www.washingtonpost.com/graphics/2020/world/corona-simulator/?fbclid=IwAR0rKKZMquiLjYjVFB3NbFv6BUanfafatLT2w1Sj5UH0zRu6qDzFKw5JBiE)
+
+**Spain:**
+
+* [Propagación del COVID-19 en España. Análisis por comunidades autónomas y provincias ](https://lab.montera34.com/covid19/) (Montera34): a series of exhaustive plots of the evolution of COVID19 in Spain and its Autonomous Regions, Italy and France. ([source](https://code.montera34.com:4443/numeroteca/covid19/-/tree/master))
+* https://covid19tracking.narrativa.com/
+* [Situación epidemiológica del coronavirus (COVID-19) en Castilla y León](https://analisis.datosabiertos.jcyl.es/pages/coronavirus/#situacin-actual) (Castilla y León)
+* https://www.euskadi.eus/contenidos/informacion/boletin_coronavirus/es_def/adjuntos/22_marzo_Boletin.pdf
+
+#### Datasets
+
+* [Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) Coronavirus repository]()
+* [Coronavirus R Package](https://github.com/RamiKrispin/coronavirus) (Rami Krispin): R-package providing an updated dataset. The raw data pulled and arranged by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from the following resources:
+
+    * World Health Organization (WHO): https://www.who.int/
+    * DXY.cn. Pneumonia. 2020. http://3g.dxy.cn/newh5/view/pneumonia.
+    * BNO News: https://bnonews.com/index.php/2020/02/the-latest-coronavirus-cases/
+    * National Health Commission of the People’s Republic of China (NHC): http:://www.nhc.gov.cn/xcs/yqtb/list_gzbd.shtml
+    * China CDC (CCDC): http:://weekly.chinacdc.cn/news/TrackingtheEpidemic.htm
+    * Hong Kong Department of Health: https://www.chp.gov.hk/en/features/102465.html
+    * Macau Government: https://www.ssm.gov.mo/portal/
+    * Taiwan CDC: https://sites.google.com/cdc.gov.tw/2019ncov/taiwan?authuser=0
+    * US CDC: https://www.cdc.gov/coronavirus/2019-ncov/index.html
+    * Government of Canada: https://www.canada.ca/en/public-health/services/diseases/coronavirus.html
+    * Australia Government Department of Health: https://www.health.gov.au/news/coronavirus-update-at-a-glance
+    * European Centre for Disease Prevention and Control (ECDC): https://www.ecdc.europa.eu/en/geographical-distribution-2019-ncov-cases 
+ 
+
+Countries' comparison:
+
+* [Measures taken by different countries](https://analisi.transparenciacatalunya.cat/Salut/Restriccions-per-prevenir-el-contagi-del-Covid-19-/cd4m-r23x) (Generalitat de Catalunya)
+
+Others:
+
+* [Here’s How Computer Models Simulate the Future Spread of New Coronavirus](https://www.scientificamerican.com/article/heres-how-computer-models-simulate-the-future-spread-of-new-coronavirus/)
+
+About
+=====================================  
+
+#### Sobre el dashboard
+
+Este dashboard no aporta apenas nada nuevo que no hayan hecho otros (ver menú ["Referencias"](#references)), por tanto más que aportar nuevo conocimiento sobre la expansión del COVID en España. No obstante, me apetecía hacerlo para aprender a utilizar herramientas y visualizaciones que no había podido utilizar hasta ahora (gráficos interactivos, tablas de datos, sitio estático en github pages...). Así pues, si tiene un valor relativo para la mayoría de gente, tiene un gran valor para su autor
+
+* Código fuente: https://github.com/ccamara/covid_spain/
+* Autoría: [Carlos Cámara](https://carloscamara.es)
+* Licencia: MIT
