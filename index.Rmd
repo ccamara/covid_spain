@@ -4,7 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     theme: flatly
     orientation: rows
-    social: menu  
+    social: menu    
     source_code: embed
 ---
 
