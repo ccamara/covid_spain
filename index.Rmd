@@ -142,31 +142,31 @@ valueBox(value = format(nacional_covid19$fallecimientos[1], big.mark = "."),
 Row {.tabset .tabset-fade}
 -----------------------------------------------------------------------
 
-### Variación
+### Casos diarios
 
 ```{r}
-plot_ly(data = nacional_covid19) %>% 
+p <- plot_ly(data = nacional_covid19) %>% 
   add_trace(x = ~ fecha,
             y = ~ variacion_casos,
             type = "scatter",
             mode = "lines+markers",
-            name = "Variación de contagios") %>% 
+            name = "Contagios confirmados diarios") %>% 
     add_trace(x = ~ fecha,
             y = ~ variacion_activos,
             type = "scatter",
             mode = "lines+markers",
             # line = list(shape = "spline"),
-            name = "Variación de casos activos") %>% 
+            name = "Casos activos diarios") %>% 
     add_trace(x = ~ fecha,
             y = ~ variacion_altas,
             type = "scatter",
             mode = "lines+markers",
-            name = "Variación de casos recuperados") %>% 
+            name = "Casos recuperados diarios") %>% 
   add_trace(x = ~ fecha,
             y = ~ variacion_fallecimientos,
             type = "scatter",
             mode = "lines+markers",
-            name = "Variación de fallecimientos") %>% 
+            name = "Fallecimientos COVID-19 diarios") %>% 
   layout(shapes = list(vline("2020-03-13", "grey"), 
                        vline("2020-03-16", "grey"),
                        vline("2020-03-30", "grey")),
@@ -181,6 +181,19 @@ plot_ly(data = nacional_covid19) %>%
          legend = list(x = 0.1, y = 0.9),
          hovermode = "compare")  
 
+for (i in 1:nrow(weekends_spain)) {
+  p <- add_polygons(p, x = c(weekends_spain[[i, "Saturday"]], 
+                             weekends_spain[[i, "Saturday"]], 
+                             weekends_spain[[i, "Sunday"]], 
+                             weekends_spain[[i, "Sunday"]]), 
+                       y = c(0, 10000,10000, 0), 
+                       hoverinfo = "none", color = I("grey"), showlegend = F, 
+                       hoveron = "points", opacity = 0.5)
+} 
+
+p  
+
+nacional_covid19$variacion_casos
 
 ```
 
@@ -229,7 +242,7 @@ plot_ly(data = nacional_covid19) %>%
 ### Composición de casos por día
 
 ```{r}
-  plot_ly(data = nacional_covid19,
+p <-  plot_ly(data = nacional_covid19,
           x = ~ fecha,
           y = ~ variacion_activos,
           # text = ~variacion_activos, 
@@ -264,6 +277,17 @@ plot_ly(data = nacional_covid19) %>%
          legend = list(x = 0.1, y = 0.9),
          hovermode = "compare")  
 
+for (i in 1:nrow(weekends_spain)) {
+  p <- add_polygons(p, x = c(weekends_spain[[i, "Saturday"]], 
+                             weekends_spain[[i, "Saturday"]], 
+                             weekends_spain[[i, "Sunday"]], 
+                             weekends_spain[[i, "Sunday"]]), 
+                       y = c(0, 10000,10000, 0), 
+                       hoverinfo = "none", color = I("grey"), showlegend = F, 
+                       hoveron = "points", opacity = 0.5)
+} 
+
+p  
 
 ```
 

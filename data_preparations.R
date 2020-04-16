@@ -25,7 +25,18 @@ nacional_covid19 <- read.csv("https://raw.githubusercontent.com/datadista/datase
          variacion_activos) %>% 
   dplyr::arrange(desc(fecha))
 
+write.csv(nacional_covid19, file = "data/interim/nacional_covid.csv")
+
 spain_age <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19_rango_edad.csv")
+
+#Creating a dataset for polygons with weekend dates
+weekends_spain <- data.frame(fecha = as.Date(nacional_covid19$fecha),
+                             day = weekdays(as.Date(nacional_covid19$fecha),
+                                            abbreviate = FALSE)) %>%
+  filter(day %in% c("Saturday", "Sunday")) %>%
+  pivot_wider(names_from = day, values_from = fecha) %>%
+  unnest()
+
 
 # Spain CCAA --------------------------------------------------------------
 
